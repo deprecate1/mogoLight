@@ -1,0 +1,187 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+#################################
+#--	COMPILE definitions
+#--
+
+CC_CPUTYPE		:= $(shell uname -m)
+DEFAULT_COMPILER 	:= gcc
+
+# This is used to override default compilers
+ifdef COMPILER
+include  ${MOGOBULL_ROOT}/maint/MOGOBULL_${COMPILER}_vars.gmk
+else
+include  ${MOGOBULL_ROOT}/maint/MOGOBULL_${DEFAULT_COMPILER}_vars.gmk
+endif #COMPILER
+
+#CCF	= $(CC) $(CFLAGS) 
+#CXXF	= $(CXX) $(CXXFLAGS)
+#CFORTF	= $(CFORT) $(CFORTFLAGS)
+#LDF	= $(LD)
+
+ifeq ($(VERBOSE), no)
+MAKE	= /usr/bin/make -s
+else
+MAKE	= /usr/bin/make
+endif
+
+CC_WARN_LEVEL   += -Wall -W
+CC_OPTIMIZER	+= 
+CC_ULTRA	+= 
+
+CC_DEPOPTS	= 
+CC_INCDIR	= /usr/include
+
+CC_BASENAME	:= $(shell basename $(CC))
+
+####################################################################################
+# General Definitions 
+
+ifeq ($(DEBUG), yes)
+GENERAL_DEFS += $(DEBUG_DEFS)
+endif
+
+ifeq ($(PROFILE), yes)
+CFLAGS		+= -pg
+CXXFLAGS	+= -pg
+FCFLAGS		+= -pg
+endif
+
+ifeq ($(USE_DMALLOC), yes)
+GENERAL_INCS    += -I${DMALLOC_INC}
+GENERAL_DEFS	+= -DDMALLOC -DMALLOC_FUNC_CHECK
+endif
+
+ifeq ($(USE_THREAD_PARALLEL), yes)
+GENERAL_INCS	+= 
+GENERAL_DEFS	+= -DPARALLELIZED -D_REENTRANT -pthread
+LDFLAGS		+= -lpthread
+
+endif
+
+ifeq ($(USE_BEAGLE), yes)
+GENERAL_INCS	+= -I$(MOGOBULL_BEAGLE_HOME)/GP/include -I$(MOGOBULL_BEAGLE_HOME)/beagle/GA/include -I$(MOGOBULL_BEAGLE_HOME)/PACC/ -I$(MOGOBULL_BEAGLE_HOME)/PACC/XML -I$(MOGOBULL_BEAGLE_HOME)/GA/src -I$(MOGOBULL_BEAGLE_HOME)/PACC/Math -I$(MOGOBULL_BEAGLE_HOME)/include
+GENERAL_DEFS	+= -DUSE_BEAGLE -DHAVE_CONFIG_H -DPACC_ZLIB
+endif
+
+ifeq ($(USE_RL), yes)
+GENERAL_INCS	+= 
+GENERAL_DEFS	+= -DRL_SCORE
+LDFLAGS		+= -lboost_filesystem -lboost_thread $(MOGOBULL_RLGO_HOME)/librlgo.a $(MOGOBULL_RLGO_HOME)/libgo_uct.a $(MOGOBULL_RLGO_HOME)/libgo.a  $(MOGOBULL_RLGO_HOME)/libsg.a $(MOGOBULL_RLGO_HOME)/libgtp.a
+endif
+
+ifeq ($(USE_MPI), yes)
+GENERAL_INCS	+= -I${MPI_HOME}/include/
+GENERAL_DEFS	+= -DMOGOMPI -DMPIMOGO -DMPIBULL_IGNORE_CXX_SEEK
+LDFLAGS		+= ${MOGOBULL_MPI_LIB}
+ifeq ($(MPI_STYLE), V1)
+GENERAL_DEFS	+= -DMPI_INTENSIVE
+endif
+endif
+
+ifeq ($(USE_BULL_MEMMGT), yes)
+GENERAL_DEFS	+= -DOPTIMIZED_MEMORY
+endif
+
+ifeq ($(USE_PLACING), yes)
+GENERAL_DEFS	+= -DTHREAD_PLACEMENT
+endif
+
+
+####################################################################################
+# General Includes
+#GENERAL_INCS += \
+#	-I. \
+#	-I$(MOGOBULL_INCLUDEPATH)\
+#	-I$(MOGOBULL_GENERAL_CONF_PATH)
+
+####################################################################################
+# Compiling C
+# General Options
+GCOPTS	+= $(CC_OPTIMIZER) $(CC_WARN_LEVEL) $(CC_DEPOPTS)
+GCDEFS	+= $(GENERAL_DEFS) 
+GCINCS	+= $(GENERAL_INCS)
+
+CFLAGS	+= $(COPTS) $(CDEFS) $(CINCS) 
+CDEFS	+= $(GCDEFS) $(ICDEFS) $(LCDEFS) $(VCDEFS)
+COPTS	+= $(GCOPTS) $(ICOPTS) $(LCOPTS) $(VCOPTS)
+
+CINCS	+= $(GCINCS) $(ICINCS) $(LCINCS) $(VCINCS)
+
+####################################################################################
+# Compiling C++
+# General and specific options
+GCXXOPTS  += $(CC_OPTIMIZER) $(CC_WARN_LEVEL) $(CC_DEPOPTS)
+GCXXDEFS  += $(GENERAL_DEFS)
+GCXXINCS  += $(GENERAL_INCS)
+#GCXXINCS  += $(GENERAL_INCS) -I$(CC_INCDIR)/g++
+
+CXXFLAGS  += $(CXXOPTS) $(CXXDEFS) $(CXXINCS)
+CXXDEFS   += $(GCXXDEFS) $(ICXXDEFS) $(LCXXDEFS) $(VCXXDEFS)
+CXXOPTS   += $(GCXXOPTS) $(ICXXOPTS) $(LCXXOPTS) $(VCXXOPTS)
+CXXINCS   += $(VCXXINCS) $(LCXXINCS) $(ICXXINCS) $(GCXXINCS)
+
+####################################################################################
+# Linker flags
+GLDOPTS += 
+GLDLIBS +=
+LDFLAGS += $(LDOPTS) $(LDLIBS)
+LDOPTS  += $(GLDOPTS) $(ILDOPTS) $(LLDOPTS) $(VLDOPTS)
+LDLIBS  += $(VLDLIBS) $(LLDLIBS) $(ILDLIBS) $(GLDLIBS)
+####################################################################################
+
+CCF     += $(CC) $(CFLAGS) 
+CXXF    += $(CXX) $(CXXFLAGS)
+CFORTF  += $(CFORT) $(CFORTFLAGS)
+LDF     += $(LD)
+
+SOURCES = $(HFILES) $(ASFILES) $(CXXFILES) $(CFILES) $(FFILES) \
+          $(LFILES) $(SHFILES) $(YFILES) $(PLFILES) $(PMFILES) \
+          $(POFILES) $(LSOURCES) $(MKFILE) $(F90FILES)
+
+LNKOBJS = $(notdir $(ASFILES:.s=.o)) \
+          $(notdir $(_CPFFILES:.C=.o)) \
+          $(notdir $(_CXXFILES:.cxx=.o)) \
+          $(notdir $(_CCFILES:.cc=.o)) \
+          $(notdir $(_CPPFILES:.cpp=.o)) \
+          $(notdir $(_C++FILES:.c++=.o)) \
+          $(notdir $(CFILES:.c=.o)) \
+          $(notdir $(FFILES:.f=.o)) \
+          $(notdir $(F90FILES:.f90=.o)) \
+          $(notdir $(LFILES:.l=.o)) \
+          $(notdir $(YFILES:.y=.o))
+
+OBJECTS = $(ASFILES:.s=.o) \
+          $(_CPFFILES:.C=.o) \
+          $(_CXXFILES:.cxx=.o) \
+          $(_CCFILES:.cc=.o) \
+          $(_CPPFILES:.cpp=.o) \
+          $(_C++FILES:.c++=.o) \
+          $(CFILES:.c=.o) \
+          $(FFILES:.f=.o) \
+          $(F90FILES:.f90=.o) \
+          $(LFILES:.l=.o) \
+          $(YFILES:.y=.o)
+
+MKFILE = GNUmakefile
+
+_CPPFILES = $(filter %.cpp, $(CXXFILES))
+_CPFFILES = $(filter %.C, $(CXXFILES))
+_CXXFILES = $(filter %.cxx, $(CXXFILES))
+_CCFILES  = $(filter %.cc, $(CXXFILES))
+_C++FILES = $(filter %.c++, $(CXXFILES))
+
+###end commondefs
+# Use cc to link by default.
+# Directories of C++ programs should redefine LINKERF = $(CXXF)
+
+ifdef COMPILE_VARS
+include ${MOGOBULL_ROOT}/maint/MOGOBULL_${COMPILE_VARS}_vars.gmk
+endif

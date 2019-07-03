@@ -1,0 +1,27 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+#-------------------------------------------------------------------#
+#-- Makefile for src/kernel directory                             --#
+#-------------------------------------------------------------------#
+include ${MOGOBULL_ROOT}/maint/MOGOBULL_makedefs.gmk
+include ${MOGOBULL_ROOT}/maint/MOGOBULL_makerules.gmk
+
+SRFILES	:= $(wildcard *.cpp)
+OBJECTS	:= $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+TARGET	:= ${MOGOBULL_EXE_PATH}/mogo_$(shell uname -m)${FLAVOR}${DEBUG}
+
+default: $(TARGET)
+all:   $(TARGET)
+debug: $(TARGET)
+opt:   $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	@mkdir -p ${MOGOBULL_EXE_PATH}
+	$(LDF) $(OBJECTS) -o $(TARGET) $(LDFLAGS)

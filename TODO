@@ -1,0 +1,5 @@
++ [BUILD] Make a log file where logging build of a Mogo with option
+   used (the user, the date, where, time, options...) [priority Low, YK]
+
++ [MEMORY] Working on the fastboard, smallvector and vectormempool
+   [prio High, YK]

@@ -1,0 +1,24 @@
+name=gnugoClone
+password=gnugoClone
+room=Computer Go
+rules=chinese
+rules.boardSize=9
+rules.time=10:00
+verbose=t
+logFile=gnugoClone.log
+gameNotes=gnugoClone.
+reconnect=t
+#opponent=ajahuang
+#opponent=mogoopp
+#opponent=Mango2
+#opponent=Casillux
+#opponent=MoGoBot2
+#opponent=parkwj
+#opponent=arpad
+#opponent=teytaud
+undo=f
+engine=/usr/games/gnugo --mode gtp
+#engine=../MoGo/src/./mogook --mode gtp --allGameTime 28 --defaultNew19 --thinkOverOtherTime 1 --keepTreeIfPossible 1 --nbThreads 4 --time 21 --earlyCut 10000 --earlyCutRatioFirstMove 0.8 --earlyCutRatioVSSecondMove 10 --thinkOverOtherTime 1 --keepTreeIfPossible 1 --limitMemoryUsed -1 --collectorLimitTreeSize 470000 --limitTreeSize 600000 --mercyThresholdDivider 10 --timeManagementMode 3 --numMoveBeginning 75 --maxBeginning 6 --dontDisplay 1 --displayGames 0
+
+mode=custom
+#mode=tournament

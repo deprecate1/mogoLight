@@ -1,0 +1,2 @@
+( echo "boardsize 19" ; echo "clear_board" ; echo "play black B2"; echo "genmove white" ; echo "quit" ) | ./mogo --19 --time 1 --earlyCut 0 --timeManagementMode 1
+

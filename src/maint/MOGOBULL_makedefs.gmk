@@ -1,0 +1,35 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+#-------------------------------------------------------------------#
+#-- MOGOBULL_makedefs - Common make definitions 
+#-------------------------------------------------------------------#
+
+#--
+#--	MOGOBULL_ definitions
+#--
+################# BUILD VARIABLES ###################################
+
+include  ${MOGOBULL_ROOT}/maint/MOGOBULL_exported_vars.gmk
+include  ${MOGOBULL_ROOT}/maint/MOGOBULL_compiler_defs.gmk
+ifneq ($(TERM), dumb)
+# Assume that the terminal can handle colors
+WHITE_ON_BLUE	:= \E[37;44m
+YELLOW_ON_BLUE	:= \E[33;44m
+RED_ON_GREY	:= \E[47;31m
+YK_ON_GREY	:= \E[57;31m
+BOLD		:= \033[1m
+RESET_COLOR	:= \033[0m
+else
+WHITE_ON_BLUE	:= 
+YELLOW_ON_BLUE	:= 
+RED_ON_GREY	:= 
+BOLD		:= 
+RESET_COLOR	:= 
+endif

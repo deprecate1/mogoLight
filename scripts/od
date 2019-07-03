@@ -1,0 +1,15 @@
+#! /bin/bash
+
+cd /users/tao-nosave/teytaud/mogoLight/scripts
+
+commande_bot_1="./mediumMogo"
+commande_bot_2="./mediumMogo"
+#commande_bot_2="./mogocvs"
+nb_games="1"
+taille="9"
+
+D=`date "+%s"`
+
+nom_fich_res="mediumGames$D"
+../third_party/gogui/1.0.2/bin/twogtp -black "$commande_bot_1" -white "$commande_bot_2" -size $taille -auto -sgffile $nom_fich_res -games $nb_games -komi 7.5 -verbose 1 
+

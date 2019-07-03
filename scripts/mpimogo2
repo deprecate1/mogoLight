@@ -1,0 +1,19 @@
+#!/bin/tcsh
+#LD_LIBRARY_PATH=/users/dsa/teytaud/MoGo/
+
+
+setenv P4_RSHCOMMAND /usr/bin/ssh
+setenv MPI_REMSH /usr/bin/ssh
+
+mpirun -machinefile ~/mogoLight/scripts/mylist2 -np 7 ~/mogoLight/mogo --9 --nbThreads 1 --totalTime 300 --dontDisplay 1 --displayGames 0 --pondering 1
+
+
+#mpirun -machinefile ./mylist -np 44 /users/dsa/teytaud/MoGo/MoGo/src/mogo --mode gtp --19 --nbThreads 1 --pondering 0 --thinkOverOtherTime 0 --totalTime 1680 
+#mpirun -v -machinefile ./mylist -np 3 /users/dsa/teytaud/MoGo/MoGo/src/mogo --test playMultipleTournaments --mode gtp --9 --totalTime 30 MoGoGTPSplit --9@--totalTime@30
+
+#/users/dsa/teytaud/MoGo/MoGo/src/./mogo --mode gtp --allGameTime 30 --defaultNew19 --nbThreads 4 --time 23 --earlyCut 10000 --earlyCutRatioFirstMove 0.8 --earlyCutRatioVSSecondMove 10 --thinkOverOtherTime 1 --keepTreeIfPossible 1 --limitMemoryUsed -1 --collectorLimitTreeSize 470000 --limitTreeSize 600000 --mercyThresholdDivider 10 --timeManagementMode 3 --numMoveBeginning 75 --maxBeginning 6 --playsAgainstHuman 0 
+
+
+# ./cgos3.tcl MoGo_G3.4a1 mogomogo '../MoGo/src/./mogo --mode gtp --allGameTime 30 --default19 --nbThreads 2 --timeMultiplier 2 --collectorLimitTreeSize 400000 --limitTreeSize 500000 --time 20 --playsAgainstHuman 0 --allowAttackInLadderWhenAdjacent 1 --thresholdSelfAtari 2 --finishBoard 1 --historySizeForPrecomputed 50'  gracefully_exit_server
+
+

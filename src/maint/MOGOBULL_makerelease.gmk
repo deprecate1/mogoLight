@@ -1,0 +1,23 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+MY_LIB_RELEASE:=$(shell uname -sr)
+
+ifdef NO_CVS_TAG
+	MY_LIB_CVSTAG :=
+else
+ifdef CVSROOT
+	MY_LIB_CVSTAG:=$(shell cvs status -v README | grep Tag | cut -c17-99 | cut -d" " -f1 | awk '{print $1}')
+else
+	MY_LIB_CVSTAG:="NotDefined"
+endif #CVSROOT
+endif #NO_CVS_TAG
+
+export LIB_RELEASE=${MY_LIB_RELEASE}
+export LIB_CVSTAG=${MY_LIB_CVSTAG}

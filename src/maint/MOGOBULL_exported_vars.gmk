@@ -1,0 +1,161 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+#-------------------------------------------------------------------#
+#-- MOGOBULL default exported variables 
+#-------------------------------------------------------------------#
+################# INSTALL CONF ###################################
+#
+export INSTALL_DIR=${MOGOBULL_ROOT}/distrib/
+export PACK_DIR=${MOGOBULL_ROOT}/packs/
+
+
+################# GENERAL VARIABLES ###################################
+# Use the first implementation of Mogo Threaded 
+export USE_THREAD_PARALLEL=yes
+
+# Use the first implementation of Mogo Threaded 
+export USE_BEAGLE=no
+export MOGOBULL_BEAGLE_HOME=${MOGOBULL_ROOT}/undefined
+
+# Use the first implementation of Mogo Threaded 
+export USE_RL=no
+export MOGOBULL_RLGO_HOME=${MOGOBULL_ROOT}/src/rlgo
+
+# Use the first implementation of Mogo MPIed
+export USE_MPI=no
+export MPI_STYLE=V0
+export MOGOBULL_MPI_LIB=-L${MPI_HOME}/lib/drivers/osock -L${MPI_HOME}/lib/ -lpmi -L/usr/local/ofed/lib64/ -lmpidev -lmpi -lrt -ldl -luuid
+
+# Use this for different memory allocation
+export USE_BULL_MEMMGT=no
+
+# Use this for thread binding on processors
+export USE_PLACING=no
+##########
+
+################# THIRD PARTY SOFT VARIABLES ##########################
+# General directory
+export THIRD_PARTY_SOFTWARE=${MOGOBULL_ROOT}/third_party/
+
+##############
+# Use this for Gogui building
+export MAKE_GOGUI_TOOLS=yes
+export GOGUI_VERSION=1.0.2
+export GOGUI_DIR=${THIRD_PARTY_SOFTWARE}/gogui/${GOGUI_VERSION}
+
+##############
+# Use this for Gnugo building
+export MAKE_GNUGO_TOOLS=yes
+export GNUGO_VERSION=3.7.11
+
+export GNUGO_DIR=${THIRD_PARTY_SOFTWARE}/gnugo/${GNUGO_VERSION}
+export GNUGO_LOG=${THIRD_PARTY_SOFTWARE}/gnugo/${GNUGO_VERSION}/gnugo_build_log
+# If no specification, takes default value
+# Check the GNUGO configure for more options
+export GNUGO_PREFIX=--prefix=${INSTALL_DIR}
+
+ifeq ($(GNUGO_VERSION), 3.6)
+export GNUGO_CACHE_SIZE=--enable-cache-size=8
+export GNUGO_LEVEL=--enable-level=10
+export GNUGO_METAMACHINE=--enable-metamachine
+export GNUGO_EXPERIMENTAL_BREAKIN=--enable-experimental-break-in
+export GNUGO_COSMIC=--enable-cosmic-gnugo
+export GNUGO_LARGE_SCALE=--enable-large-scale
+export GNUGO_OPTIONS=\
+	${GNUGO_PREFIX} ${GNUGO_CACHE_SIZE} ${GNUGO_LEVEL} \
+	${GNUGO_METAMACHINE} ${GNUGO_EXPERIMENTAL_BREAKIN} \
+	${GNUGO_COSMIC} ${GNUGO_LARGE_SCALE}
+endif
+ifeq ($(GNUGO_VERSION), 3.7.11)
+export GNUGO_CACHE_SIZE=--enable-cache-size=-1
+export GNUGO_OPTIONS=\
+	${GNUGO_PREFIX} ${GNUGO_CACHE_SIZE} ${GNUGO_LEVEL} \
+	${GNUGO_METAMACHINE} ${GNUGO_EXPERIMENTAL_BREAKIN} \
+	${GNUGO_COSMIC} ${GNUGO_LARGE_SCALE}
+endif
+
+##############
+# Check for your JRE location
+export JAVA_HOME=/usr/
+export JRE_HOME=/usr/java/jre1.6.0_03
+
+##########
+export MOGOBULL_VERSION_LOG=\
+	${MOGOBULL_ROOT}/engines/VERSIONS
+##########
+
+
+
+################# UNINTERESTING VARS ###################################
+export MOGOBULL_EXE_PATH= \
+	${MOGOBULL_ROOT}/engines/
+
+export MOGOBULL_TOOLS_PATH=\
+	${MOGOBULL_ROOT}/maint
+
+export MOGOBULL_DOXYGEN_FILE=\
+	${MOGOBULL_TOOLS_PATH}/DoxyMogo
+
+export MOGOBULL_MAKEDEFS= \
+	MOGOBULL_makedefs.gmk
+
+export MOGOBULL_MAKERULES= \
+	MOGOBULL_makerules.gmk
+
+export MOGOBULL_OBJREPOS= \
+	${MOGOBULL_ROOT}/.OBJ/
+
+export MOGOBULL_INSTALLATION_PATH ?=\
+	$(INSTALL_DIR)
+
+export MOGOBULL_PACK_PATH ?=\
+	$(PACK_DIR)
+
+export MOGOBULL_GENERAL_CONF_PATH=\
+	${MOGOBULL_ROOT}/conf
+
+export MOGOBULL_GENERAL_DOCS_PATH=\
+	${MOGOBULL_ROOT}/docs
+
+
+################# END  ###################################
+
+ifdef EXPORTED_VARS
+include MOGOBULL_exported_vars_${EXPORTED_VARS}.gmk
+endif
+
+##########
+##########
+##########
+##########
+########## BULLSHIT
+################# WASTE BASKET CONF ###################################
+################# END  ###################################
+
+export MOGOBULL_BINPATH= \
+	${MOGOBULL_ROOT}/bin
+
+export MOGOBULL_DSOPATH= \
+	${MOGOBULL_ROOT}/lib
+
+export MOGOBULL_LIBPATH= \
+	${MOGOBULL_ROOT}/lib
+
+export MOGOBULL_ARCHIVES_PATH= \
+	${MOGOBULL_ROOT}/src/
+
+export MOGOBULL_TOOLS_PATH= \
+	${MOGOBULL_ROOT}/maint
+
+export MOGOBULL_LIB= \
+	-L${MOGOBULL_DSOPATH}
+
+export MOGOBULL_INCLUDEPATH= \
+	${MOGOBULL_ROOT}/include/

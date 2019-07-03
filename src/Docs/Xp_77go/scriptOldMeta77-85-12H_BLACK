@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/home/orsay/hdoghmen/FUSEKI_BLACK11/srcFUSEKI/mogoSEVEN --9 --pathsFuseki "/home/orsay/hdoghmen/FUSEKI_BLACK11/whiteOpenings/" --nbThreads 8 --earlyCut 0 --time 1080 --timeManagementMode 1 --pondering 0 
+

@@ -1,0 +1,2 @@
+mpicxx  -O0 -march=opteron -ffast-math -W -enable-threads -DPARALLELIZED -D_REENTRANT -pthread  -c innermcgoplayer_mg2.cpp
+make 

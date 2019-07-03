@@ -1,0 +1,21 @@
+#!/bin/bash
+
+nom=`ls -t *.dat | head -1` 
+
+echo $nom
+
+NW=`grep "W+" $nom | wc -l`
+NB=`grep "B+" $nom | wc -l`
+
+echo White[`grep WhiteComm $nom | head -1 | sed 's/.*://g' `] wins: $NW
+echo Black[`grep BlackComm $nom | head -1 | sed 's/.*://g' `] wins: $NB
+
+echo $NW > n1_taux
+echo $NB > n2_taux
+
+./taux.m
+
+echo 3 last games:
+tail -3 $nom
+
+

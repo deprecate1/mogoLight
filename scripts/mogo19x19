@@ -1,0 +1,10 @@
+#!/bin/csh -f
+
+# this mogo:
+# 9x9
+# 28 minutes per side
+# 4 threads
+# ==> ok for kgs
+
+../mogo --19 --totalTime 1680 --nbThreads 4 --pondering 1
+

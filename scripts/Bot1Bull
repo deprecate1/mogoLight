@@ -1,0 +1,1 @@
+./$MOGO_HOME/mogo_x64_64 --9 --totalTime 60 --nbThreads 4

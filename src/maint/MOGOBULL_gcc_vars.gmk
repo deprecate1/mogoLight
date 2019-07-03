@@ -1,0 +1,41 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+CC	= gcc
+CPP	= $(CC) -E
+CXX	= g++
+CFORT	= gcc
+LD	= g++
+
+DEBUG_FLAGS 	:= -ggdb3 -O0 -g
+
+ifeq ($(CC_CPUTYPE), ia64)
+GENERAL_DEFS    += -D_IA64_ -DHAVE_GCC_AND_IA64 -DHAVE_GCC_AND_IA64_ASM
+ifeq ($(DEBUG), yes)
+CXXFLAGS	+= $(DEBUG_FLAGS) 
+else
+CXXFLAGS	+= -march=ia64 -enable-threads -O3 -funroll-loops -funswitch-loops -ffast-math 
+endif #DEBUG
+endif #CPUTYPE
+
+ifeq ($(CC_CPUTYPE), x86_64)
+# Intel specific name
+GENERAL_DEFS    += -D_EM64T_
+ifeq ($(DEBUG), yes)
+CXXFLAGS	+= $(DEBUG_FLAGS) 
+else
+#CXXFLAGS	+= -march=opteron -enable-threads -O3 -funroll-loops -funswitch-loops -ffast-math
+CXXFLAGS	+= -enable-threads -O3 -march=opteron -funroll-loops -funswitch-loops -ffast-math
+endif #DEBUG
+endif
+
+# CPU special a analyser 
+# i386 and x86-64 Options -mtune=cpu-type  -march=cpu-type -mfpmath=unit -masm=dialect  -mno-fancy-math-387 -mno-fp-ret-in-387  -msoft-float  -msvr3-shlib -mno-wide-multiply  -mrtd  -malign-double
+# -mpreferred-stack-boundary=num -mmmx  -msse  -msse2 -msse3 -m3dnow -mthreads  -mno-align-stringops  -minline-all-stringops -mpush-args  -maccumulate-outgoing-args  -m128bit-long-double
+# -m96bit-long-double  -mregparm=num  -momit-leaf-frame-pointer -mno-red-zone -mno-tls-direct-seg-refs -mcmodel=code-model -m32  -m64

@@ -1,0 +1,1 @@
+../src/mogo --9 --nbTotalSimulations 400000000 --useOpeningDatabase 0 --firstMoveFixed 0 --pondering 0 --nbThreads 1

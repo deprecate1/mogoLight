@@ -1,0 +1,17 @@
+#! /bin/sh
+
+
+# Dispath the experiment over the cores of the machine
+
+for i in `cat $OAR_FILE_NODES | uniq `
+do
+    oarsh $i /home/hdoghmen/FUSEKI_BLACK11/betterOpening77-85-12H_BLACK &
+    sleep 4
+done
+
+for i in `cat $OAR_FILE_NODES  `
+do
+    wait
+done
+
+

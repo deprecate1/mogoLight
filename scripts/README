@@ -1,0 +1,16 @@
+
+for fun, and only for people who speak GTP:
+===========================================
+mogo9x9cgos  --->  launches a mogo on cgos 9x9 (be carefull, the name of the machine on which mogo is launched is written in the code)
+mogo19x19 : launches a mogo in 19x19, 28 minutes per side, in GTP mode (idem)
+mogo9x9: launches a mogo in 9x9, 5 minutes per side, in GTP mode (idem)
+
+For KGS, test and/or ranked games:
+==================================
+ATTENTION penser à modifier le nombre de threads. C'est dans le fichier kgsconfig adequat (entre parenthèses en fin de ligne),
+ecrit en dur a un endroit evident (--nbThreads 80 si vous avez 80 coeurs).
+
+kgsLaunch9x9.bull.sh --> lance mogo sur KGS, 9x9 (does not rank mogo - only 19x19 games are ranked)   (PATCHER kgsconfigBull9x9)
+kgsLaunch19x19.bull.sh --> lance mogo sur KGS, 19x19 (ranks mogo!)    (PATCHER kgsconfigBull19x19)
+kgsLaunch19x19Arpad.bull.sh --> lance mogo sur KGS, 19x19 (only plays against Arpad, for test only)  (PATCHER kgsconfigBull19x19Arpad)
+kgsLaunch --> lance mogo sur kgs (utilisation TAO, il faut patcher le fichier kgsconfig)    (PATCHER kgsconfig)

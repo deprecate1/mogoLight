@@ -1,0 +1,5 @@
+boardsize 9
+clear_board
+play black A1
+genmove white
+quit

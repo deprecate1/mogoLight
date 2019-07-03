@@ -1,0 +1,3 @@
+#!/bin/bash 
+
+/home/teytaud/prout/mogoLight/third_party/gogui/1.0.2/bin/gogui -size 9 -program '/users/tao-nosave/teytaud/mogoLight/srcOB/mogo --9 --loadOB "/users/tao-nosave/teytaud/mogoLight/srcOB/mostRecentOB.ob"  --time 6 --earlyCut 0 --minNumberOfSimulationsOfResign 1000'

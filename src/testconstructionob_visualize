@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+rm archivage/*.prt
+ls archivage/* | wc -l > nbdata
+for file in archivage/*
+do
+	cat $file | grep -v '#' > ${file}.prt
+done
+
+for i in `seq 0 200`
+do
+	echo -n "${i}:"
+	w=`grep "^${i}[^0-9]" archivage/*.prt | grep 'B+R' | wc -l`
+	l=`grep "^${i}[^0-9]" archivage/*.prt | grep 'W+R' | wc -l`
+	echo -n $(( ($w * 10000 + 1)  / ( $w * 100 + $l *100 + 1) )) 
+	echo "     (($w + $l))"
+done | grep -v '0 + 0' | tee data2
+
+cat data2 | sed 's/(.*//g' | sed 's/.*://g' > data
+
+
+./visudataob.m
+nohup okular ob.eps &
+

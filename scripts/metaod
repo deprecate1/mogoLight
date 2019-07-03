@@ -1,0 +1,11 @@
+#!/bin/bash -f
+for i in `cat machines`
+do
+ssh $i /home/bordeaux/oteytaud/mogoLight/scripts/od
+done
+
+
+
+#### cvs add od weakMogo strongMogo metaod
+#### ajouter les path pour twogtp
+#### verifier que twogtp fait maxmoves

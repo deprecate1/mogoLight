@@ -1,0 +1,38 @@
+////////////  7X7 GO ///////////////////
+
+You find here:
+ * brief description about opening in MoGo for 7x7 Go
+ * template scripts provided in Xp_77go folder (specific to nancy cluster, but easly adaptable to any other cluster/user)
+
+//-----------------------------------------------------------
+// 1. How to automatically construct the opening for 7x7 Go
+//-----------------------------------------------------------
+
+The idea is to run several games and save the sgf game files
+to a FUSEKI_FOLDER using the --pathsFuseki "/PATH/.../FUSEKI_FOLDER" option
+during the learning phase.
+
+Command:
+PATH/to/srcMoGo/mogo77 --9 --pathsFuseki "/PATH/to/FUSEKI_FOLDER" --nbThreads 8 --earlyCut 0 --time 1080 --timeManagementMode 1 --pondering 0
+
+//-----------------------------------------------------------
+// 2. How to launch MoGo with the constructed opening
+//-----------------------------------------------------------
+
+The learning phase will provide MoGo with a big datatbase of sgf game files 
+stored in the "FUSEKI_FOLDER".
+MoGo reads them in a similar way that the "--loadOB" option does.
+Then you should see when you run MoGo with the command below.
+This means that your opening, are succesfully loaded.
+...
+addDirOB
+/home/orsay/hdoghmen/FUSEKI_BLACK11/SGFSFUSEKI-7-8.5-12H_BLACK//11-06-19_03:33:38001.sgf - 100
+/home/orsay/hdoghmen/FUSEKI_BLACK11/SGFSFUSEKI-7-8.5-12H_BLACK//BLACK11_7_8.5__11_07_08__735048544_733835152001.sgf - 200
+/home/orsay/hdoghmen/FUSEKI_BLACK11/SGFSFUSEKI-7-8.5-12H_BLACK//465_77go_goodForWhite6.sgf.sgf - 300
+/home/orsay/hdoghmen/FUSEKI_BLACK11/SGFSFUSEKI-7-8.5-12H_BLACK//173_77go_goodForBlack3.sgf.sgf - 400
+....
+
+
+Command:
+PATH/to/srcMoGo/mogo77 --9 --pathsFuseki "/PATH/to/FUSEKI_FOLDER" --nbThreads 8 --earlyCut 0 --time 1080 --timeManagementMode 1 --pondering 0
+

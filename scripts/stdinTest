@@ -1,0 +1,6 @@
+boardsize 9
+genmove black
+genmove white
+genmove black
+quit
+

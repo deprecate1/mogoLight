@@ -1,0 +1,87 @@
+//////////////////README /////////////////
+
+Introduction
+   For "how to use/download/interface": http://www.lri.fr/~gelly/MoGo_Download.htm
+   Main #define:
+     - GOLDENEYE: tactical solver
+     - GOLDENEYE_MC: use of GOLDENEYE in the Monte-Carlo part
+
+Main parts of the program:
+1) gtpengine_mg.cpp: how to communicate with the program (GTP language)
+      (the function generateOneMove makes mogo choose a move)
+
+2) innermcgoplayer_mg.cpp: the main loop
+           ==> the "thinking" process is in         selfTrainMultithreads(goban,1000000000,time);
+     	on each thread, it launches the function "selfTrainOneGameAsynchCore"
+     SelfTrainOneGameAsynchCore is decomposed as follows:
+     
+     A) The loop corresponding to one game in the tree is 
+     "for (depth = 0 ; (pass < 2) && (depth < goban.width()*goban.height()*2) && (securityCounter<goba
+     n.width()*goban.height()*4) ; depth ++, securityCounter++) {"
+     
+     For each iteration of this loop:
+     a) Each move in the tree is selected by
+             "simulationMoveSelectorTmp->selectOneMoveNew(node," (see 3 below)
+     b) Then, the move is played "FastBoard::playOwnBoardForThread(location);"
+     c) If the resulting board is not yet in memory, and if the number of simulations is sufficently
+        big, then we create the new node "if (node->numberOfSimulation()<exitTreeNbSimulations)"
+     
+     B) Then, we switch to the Monte-Carlo simulation: it's the function "slaveOneOperation"
+      which itself calls "selfTrainFastToEndAndGetOneScoreNew3".
+       Just after the call to "selfTrainFastToEndAndGetOneScoreNew3", there is a #ifdef GOLDENEYE,
+       it is the part in which we discard (or reduce the weights) of simulations which are
+       not consistent with the predictions of GoldenEye.
+     
+     So the Monte-Carlo part, in "selfTrainFastToEndAndGetOneScoreNew3", which calls "oneRollOutThread",
+        which calls "oneRollOut", which has as main loop (for finishing the Monte-Carlo), the 
+        do (line number 689).... while(true) in "fastboard_mg.cpp", which calls "playOne3(" for choosing
+         each move (which itself calls "playOne(")
+        which tries several functions for choosing a move:
+          - the first one is "coreOfRandomMode44("
+                         * If there is a "nakade" move, then play it
+                         * If last move = atari, then save stones
+          - the second one is "coreOfRandomMode45("
+                         * "Fillboard modification": try some randomly chosen locations, if one of them
+                           is empty, then play it
+          - the third one is "playOneInterestingMove("
+     		    * "playOneInterestingMove(": play one of the 8 neighbours of the last played move,
+                           if it matches the 3x3 patterns
+          - the fourth one is "playOneAvoidBigSelfAtari("
+                            (all is in the name :-) )
+     
+     C) Then, we update all the statistics, it's the function "slaveOneOperationAfterScore"
+     
+     
+3) moveselector_mg.cpp: selecting moves
+	Moves in the tree are selected by:
+        "simulationMoveSelectorTmp->selectOneMoveNew(node," (see 3 below)
+    The variables are documented at "http://www.lri.fr/~teytaud/persomogo.html"
+   Main idea: we compute a score for each move, and then we select the move with highest score.
+
+   Most difficult thing: we do not compute the score for each move.
+              1) sometimes (rarely) we compute the score for each move
+              2) but usually, we compute only the score for the main moves (the moves 
+                 with best score)
+    Choosing between 1) and 2) is made at the line "if (node->countDownForConsideringAllMoves<=0) {".
+    ("chooseBest17FromNBest" is the function which only considers the N best scores and not all moves)
+
+     ==> this means that all formulas for score are written four times:
+        * with and without child node (some moves correspond to a child node, and some moves not)
+        * in the "fast" case (only the N best moves) or in the "slow" case (all moves)
+
+      One of these 4 formulas is around line 1331 (and later)
+         * value= winRate
+         * valueAmaf = RaveWinRate
+         * bonus= some bonus for some moves which match some rules
+         * expertise = some bonus for the patterns (both learnt patterns and handcrafted patterns)
+         * coef = coefficient for the winRate (goes to 1 for high numbers of simulations)
+         * coef_expertise = coefficient for the expertise
+         
+4) fastboard_mg.cpp: the (light) board C++ class
+
+5) goban_mg.cpp: the (heavy) board C++ class
+
+
+Documentation: http://www.lri.fr/~teytaud/MOGOLIGHTREADME
+               http://www.lri.fr/~gelly/MoGo_Download.htm
+

@@ -1,0 +1,14 @@
+#for t in 100 316 1000 3162 10000 31623 100000 316227 1000000 3162277 10000000 31622776 100000000 316227766
+for t in 3162277 10000000 31622776 100000000 316227766
+do
+touch res$t
+rm res$t
+for essai in `seq 1`
+do
+echo $t > nbsims
+java -jar /home/olivier/blindgnugo/gogui-1.3.0onecolorgo55/lib/gogui-regress.jar ./mycode /home/olivier/VERSIONING/mogoLight/third_party/gnugo/3.6/regression/9x9.tst
+cp 9x9.html result${t}_${essai}.html
+lynx result${t}_${essai}.html -dump | head -25 | grep -i1 "Tests FAIL" | tail -1 >> res$t
+done
+done
+

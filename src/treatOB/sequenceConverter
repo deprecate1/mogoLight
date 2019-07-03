@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+echo $* | tr 'a-z' 'A-Z' | sed 's/A/1/g' | sed 's/B/2/g' | sed 's/C/3/g' | sed 's/D/4/g' | sed 's/E/5/g' | sed 's/F/6/g' | sed 's/G/7/g' | sed 's/H/8/g' | sed 's/I/9/g' | sed 's/J/9/g' > data
+
+./sequenceConverter.m
+
+
+
+

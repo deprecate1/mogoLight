@@ -1,0 +1,359 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+#-------------------------------------------------------------------------#
+#-- MOGOBULL_makerules - Make rules for the MOGOBULL_ project                     --#
+#-------------------------------------------------------------------------#
+
+#-- The targets are:							--#
+#--    build debugging versions: 		       debug            --#
+#--    build optimized versions:		       optim            --#
+#--    remove all linked files:	                       clean_bin        --#
+#--    remove all object files:	                       clean            --#
+#--    remove all files:	                       mrproper         --#
+#-------------------------------------------------------------------------#
+
+#-------------------------------------------------------------------------#
+#-- The target types are:                                               --#
+#--    TARGET: makes either a DBG or OPT dynamically linked executable. --#
+#--    ARCHIVE: makes either a DBG or OPT object files archive          --#
+#--    LIBRARY: makes either a DBG or OPT DSO library from ARCHIVES     --#
+#--    DYNOBJ: makes either DBG or OPT DSO library from sources,        --#
+#--       DYNOBJ stands for dynamic objects.                            --#
+#-------------------------------------------------------------------------#
+
+#--
+#--	generic targets
+#--
+
+#-- make optimized dso version of program by default
+default: debug
+
+#-- make all versions of program
+opt:	$(TARGET:=.opt) \
+	$(STAT_LIBRARY:=.opt) \
+	$(DYNOBJ:=.opt) \
+	$(ARCHIVE:=.opt)  
+
+debug:	$(TARGET:=.dbg) \
+	$(STAT_LIBRARY:=.dbg) \
+	$(DYNOBJ:=.dbg) \
+	$(ARCHIVE:=.dbg) 
+
+#-- dependencies
+dep:
+	@ echo "MOGOBULL_    - Establishing dependencies"
+	@ if test -f .makedepend; then rm -f .makedepend; fi
+	@ touch .makedepend
+	@ makedepend -f .makedepend \
+		-DPF_CPLUSPLUS_API -D__linux__ \
+		-I. \
+		-I${MOGOBULL_INCLUDEPATH} \
+		-I${MOGOBULL_CORE_INCLUDEPATH} \
+		-I/usr/include/g++-3/ \
+		-I /usr/include/c++/3.2/backward/ \
+		-I /usr/include/c++/3.2/i386-redhat-linux/ \
+		-I /usr/include/c++/3.2/ \
+		${CXXFILES}
+
+#-- clean up directories {remove junk}
+mrproper: clean
+	rm -f .makedepend core so_locations
+
+#-- clean up directories
+clean:
+ifdef OBJECTS
+	@ echo "MOGOBULL_       - Removing object files";
+	@ rm -f ${OBJECTS};
+	@ rm -f ${LNKOBJS};
+	@ rm -f $(OBJECTS:.o=.d);
+	@ rm -f $(LNKOBJS:.o=.d);
+endif
+#ifdef ARCHIVE
+#	@ echo -e "MOGOBULL_       - Removing $(BOLD)$(ARCHIVE)$(RESET_COLOR)";
+#	@ rm -f ${LINKDIR}/${ARCHIVE}.a;
+#	@ rm -f ${LINKDIR}/${ARCHIVE}.la;
+#endif
+ifdef DYNOBJ
+	@ echo "MOGOBULL_       - Removing $(DYNOBJ)";
+	@ rm -f ${MOGOBULL_DSOPATH}/${DYNOBJ}.so;
+	@ rm -f ${MOGOBULL_DSOPATH}/${DYNOBJ}.so.${DSOVERSION};
+endif
+ifdef LIBRARY
+	@ echo "MOGOBULL_       - Removing $(LIBRARY)";
+	@ rm -f ${MOGOBULL_DSOPATH}/${LIBRARY}.so;
+	@ rm -f ${MOGOBULL_DSOPATH}/${LIBRARY}.so.${DSOVERSION};
+endif
+ifdef TARGET
+	@ echo "MOGOBULL_       - Removing $(TARGET)";
+	@ rm -f ${MOGOBULL_BINPATH}/${TARGET};
+	@ rm -f ${MOGOBULL_BINPATH}/${TARGET}.DBG;
+	@ rm -f ${MOGOBULL_BINPATH}/${TARGET}.OPT;
+endif
+
+clean_bin:
+ifdef MOGOBULL_BINPATH
+	@ rm -f ${MOGOBULL_BINPATH}/* ;
+	@ rm -f ${MOGOBULL_DSOPATH}/*
+endif
+
+#--
+#--	TARGET targets
+#--
+
+#-- make a debugging version of the program
+$(TARGET:=.dbg): 
+	@ echo "MOGOBULL_ - TARGET(DBG): $(BOLD)${MOGOBULL_BINPATH}/${TARGET}$(RESET_COLOR)"
+	@ ${MAKE} -f GNUmakefile CC_OPTIMIZER+="$(DEBUG_FLAGS)"\
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_BINPATH}/${TARGET}.DBG
+	@ rm -f ${MOGOBULL_BINPATH}/${TARGET}
+	@ ln -s ${MOGOBULL_BINPATH}/${TARGET}.DBG ${MOGOBULL_BINPATH}/${TARGET}
+
+#-- make an optimized version of the program
+$(TARGET:=.opt): 
+	@ echo "MOGOBULL_ - TARGET(OPT): $(BOLD)${MOGOBULL_BINPATH}/${TARGET}$(RESET_COLOR)"
+	@ ${MAKE} -f GNUmakefile \
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_BINPATH}/${TARGET}.OPT
+	@ rm -f ${MOGOBULL_BINPATH}/${TARGET}
+	@ ln -s ${MOGOBULL_BINPATH}/${TARGET}.OPT ${MOGOBULL_BINPATH}/${TARGET}
+
+#--
+#--	internal TARGET targets
+#--
+
+${MOGOBULL_BINPATH}/${TARGET}.DBG: ${OBJECTS}
+	@ echo "MOGOBULL_ - Linking DBG target: $@"
+	@ $(CXXF) -o $@ ${OBJECTS} $(DDSOLINKS) ${LIBRARIES} ${LDOPTS} -Wl,--no-undefined 
+
+${MOGOBULL_BINPATH}/${TARGET}.OPT: ${OBJECTS}
+	@ echo "MOGOBULL_ - Linking OPT target: $@"
+	@ $(CXXF) -o $@ ${OBJECTS} $(DSOLINKS) ${LIBRARIES} ${LDOPTS} -Wl,--no-undefined 
+
+#--
+#--	ARCHIVE targets
+#--
+
+#-- make a debugging version of the ARCHIVE
+$(ARCHIVE:=.dbg): 
+	@ echo "MOGOBULL_    - ARCHIVE(DBG): ${LINKDIR}/${ARCHIVE}.a"
+	@ ${MAKE} -f GNUmakefile CC_OPTIMIZER+="$(DEBUG_FLAGS)" ${LINKDIR}/${ARCHIVE}.a
+ifeq ($(USE_LIBTOOL),yes)
+	@ ${MAKE} -f GNUmakefile CC_OPTIMIZER+="$(DEBUG_FLAGS)" ${LINKDIR}/${ARCHIVE}.la
+endif
+
+#-- make an optimized version of the library
+$(ARCHIVE:=.opt): 
+	@ echo "MOGOBULL_    - ARCHIVE(OPT): ${LINKDIR}/${ARCHIVE}.a"
+	@ ${MAKE} -f GNUmakefile ${LINKDIR}/${ARCHIVE}.a
+ifeq ($(USE_LIBTOOL),yes)
+	@ ${MAKE} -f GNUmakefile CC_OPTIMIZER+="$(DEBUG_FLAGS)" ${LINKDIR}/${ARCHIVE}.la
+endif
+
+#--
+#--	internal ARCHIVE targets
+#--
+
+ifeq ($(VERBOSE),yes)
+${LINKDIR}/${ARCHIVE}.a: ${LNKOBJS}
+	@ echo "MOGOBULL_    - Archiving objects: $@"
+	@ ar cruvs $@ ${LNKOBJS}; sleep 3; sync
+else
+${LINKDIR}/${ARCHIVE}.a: ${LNKOBJS}
+	@ echo "MOGOBULL_    - Archiving objects: $@"
+	@ ar cruvs $@ ${LNKOBJS} &> /dev/null; sleep 3; sync
+endif
+
+ifeq ($(USE_LIBTOOL),yes)
+ifeq ($(VERBOSE),yes)
+${LINKDIR}/${ARCHIVE}.la: ${LNKOBJS}
+	@ echo "MOGOBULL_    - Libtool archiving objects: $@"
+	@ libtool --mode=link ${CCF} $@ ${LNKOBJS} 
+else
+${LINKDIR}/${ARCHIVE}.la: ${LNKOBJS}
+	@ echo "MOGOBULL_    - Archiving objects: $@"
+	@ libtool --mode=link ${CCF} $@ ${LNKOBJS} &> /dev/null
+endif
+endif
+
+#--
+#--	internal LIBRARY targets
+#--
+
+#-- make an debugging version of the library that uses DSOs
+$(LIBRARY:=.dbg):
+	@ echo "MOGOBULL_ - LIBRARY(DBG): ${MOGOBULL_DSOPATH}/${LIBRARY}.so"
+	@ ${MAKE} -f GNUmakefile CC_OPTIMIZER+="$(DEBUG_FLAGS)"\
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_DSOPATH}/${LIBRARY}.so
+	@ rm -f ${MOGOBULL_DSOPATH}/${LIBRARY}.so.${DSOVERSION}
+	@ ln -s ${MOGOBULL_DSOPATH}/${LIBRARY}.so ${MOGOBULL_DSOPATH}/${LIBRARY}.so.${DSOVERSION}
+
+$(STAT_LIBRARY:=.dbg):
+	@ echo "MOGOBULL_ - LIBRARY(DBG): ${MOGOBULL_DSOPATH}/${LIBRARY}.a"
+	@ ${MAKE} -f GNUmakefile CC_OPTIMIZER+="$(DEBUG_FLAGS)"\
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_DSOPATH}/${LIBRARY}.a
+
+#-- make an optimized version of the library that uses DSOs
+$(LIBRARY:=.opt):
+	@ echo "MOGOBULL_ - LIBRARY(OPT): ${MOGOBULL_DSOPATH}/${LIBRARY}.so"
+	@ ${MAKE} -f GNUmakefile \
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_DSOPATH}/${LIBRARY}.so
+	@ rm -f ${MOGOBULL_DSOPATH}/${LIBRARY}.so.${DSOVERSION}
+	@ ln -s ${MOGOBULL_DSOPATH}/${LIBRARY}.so ${MOGOBULL_DSOPATH}/${LIBRARY}.so.${DSOVERSION}
+
+$(STAT_LIBRARY:=.opt):
+	@ echo "MOGOBULL_ - LIBRARY(OPT): ${MOGOBULL_DSOPATH}/${STAT_LIBRARY}.a"
+	@ ${MAKE} -f GNUmakefile \
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_DSOPATH}/${STAT_LIBRARY}.a
+
+#--
+#--	internal LIBRARY targets
+#--
+
+${MOGOBULL_DSOPATH}/${LIBRARY}.so: ${ARCHIVES}
+	@ echo "MOGOBULL_ - Linking archives: ${ARCHIVES} to $@"
+	@ $(CC) -shared $(CC_OPTIMIZER) $(LDOPTS) \
+	 ${LIBRARIES} -o $@
+
+
+${MOGOBULL_DSOPATH}/${STAT_LIBRARY}.a: ${ARCHIVES}
+	@ echo "MOGOBULL_ - Linking archives: ${ARCHIVES} to $@"
+	@ cd ${MOGOBULL_ARCHIVES_PATH} 
+	@  
+#	@ cp $@ ${MOGOBULL_DSOPATH}	
+#	@ rm *.o
+
+
+#${MOGOBULL_DSOPATH}/${LIBRARY}.so: ${ARCHIVES}
+#	@ echo "MOGOBULL_ - Linking archives: ${ARCHIVES} to $@"
+#	@ $(CC) -shared $(CC_OPTIMIZER) $(LDOPTS) \
+#	-Wl,--whole-archive -Wl,--no-undefined -Wl,--start-group $(ARCHIVES) -Wl,--end-group \
+#	 ${LIBRARIES} -o $@
+
+
+#--
+#--	Dynamic object targets
+#--
+
+#-- make an debugging version of the library that uses DSOs
+$(DYNOBJ:=.dbg): 
+	@ echo "MOGOBULL_ - DYNOBJ(DBG): ${MOGOBULL_DSOPATH}/${DYNOBJ}.so"
+	@ ${MAKE} -f GNUmakefile CC_OPTIMIZER+="$(DEBUG_FLAGS)" \
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_DSOPATH}/${DYNOBJ}.so.${DSOVERSION} 
+	@ rm -f ${MOGOBULL_DSOPATH}/${DYNOBJ}.so
+	@ ln -s ${MOGOBULL_DSOPATH}/${DYNOBJ}.so.${DSOVERSION} ${MOGOBULL_DSOPATH}/${DYNOBJ}.so
+
+#-- make an optimized version of the library that uses DSOs
+$(DYNOBJ:=.opt): 
+	@ echo "MOGOBULL_ - DYNOBJ(OPT): ${MOGOBULL_DSOPATH}/${DYNOBJ}.so"
+	@ ${MAKE} -f GNUmakefile \
+	     LIBRARIES='${SYSTEM}' \
+	     ${MOGOBULL_DSOPATH}/${DYNOBJ}.so.${DSOVERSION}
+	@ rm -f ${MOGOBULL_DSOPATH}/${DYNOBJ}.so
+	@ ln -s ${MOGOBULL_DSOPATH}/${DYNOBJ}.so.${DSOVERSION} ${MOGOBULL_DSOPATH}/${DYNOBJ}.so
+
+#--
+#--	internal LIBRARY targets
+#--
+
+${MOGOBULL_DSOPATH}/${DYNOBJ}.so.$(DSOVERSION): ${OBJECTS}
+	@ echo "MOGOBULL_ - Linking ${OBJECTS} to DSO $@"
+	@ $(CXX) -shared -Wl,--no-undefined $(CC_OPTIMIZER) \
+	$(OBJECTS) \
+	${LIBRARIES} -o $@
+
+#-- look for sources in this directory when recursing
+VPATH=..
+
+##########################################################
+ifeq ($(VERBOSE),yes)
+.C.o:
+	@ echo -e "MOGOBULL_(o)    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ echo -e "$(RED_ON_GREY)$(BOLD)CXXF$(RESET_COLOR) == " $(CCF)
+	@ $(CCF) -c $< #2>&1 > /dev/null
+else
+.C.o:
+	@ echo -e "MOGOBULL_(o)    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CCF) -c $< 2>&1 > /dev/null
+endif
+##########################################################
+ifeq ($(VERBOSE),yes)
+%.o: %.c
+	@ echo -e "MOGOBULL_(c)    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ echo  -e "$(BOLD)CCF$(RESET_COLOR) == " $(CCF)
+	@ $(CCF) -c $< #2>&1 > /dev/null
+else
+%.o: %.c
+	@ echo -e "MOGOBULL_(c)    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CCF) -c $< 2>&1 > /dev/null
+endif
+##########################################################
+ifeq ($(VERBOSE),yes)
+%.o: %.cxx
+	@ echo -e "$(RED_ON_GREY)MOGOBULL_($(BOLD)cpp$(RESET_COLOR))    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ echo  -e "$(RED_ON_GREY)$(BOLD)CXXF$(RESET_COLOR) == " $(CXXF)
+	@ $(CXXF) -c $< #2>&1 > /dev/null
+else
+%.o: %.cxx
+	@ echo -e "$(RED_ON_GREY)MOGOBULL_($(BOLD)cpp$(RESET_COLOR)    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CXXF) -c $< 2>&1 > /dev/null
+endif
+##########################################################
+ifeq ($(VERBOSE),yes)
+ifeq ($(COMPILER), icc)
+init%board_mg.o: init%board_mg.cpp
+	@ echo -e "MPIBULL2_(c)    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CCF) -O2 -c $< 2>&1 > /dev/null
+endif
+%.o: %.cpp
+	@ echo -e "$(RED_ON_GREY)MOGOBULL_($(BOLD)cpp$(RESET_COLOR)))    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ echo  -e "$(RED_ON_GREY)$(BOLD)CXXF$(RESET_COLOR) == " $(CXXF)
+	@ $(CXXF) -c $< #2>&1 > /dev/null
+else
+ifeq ($(COMPILER), icc)
+init%board_mg.o: init%board_mg.cpp
+	@ echo -e "MPIBULL2_(c)    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CCF) -O2 -c $< 2>&1 > /dev/null
+endif
+%.o: %.cpp
+	@ echo -e "$(RED_ON_GREY)MOGOBULL_($(BOLD)cpp$(RESET_COLOR))    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CXXF) -c $< 2>&1 > /dev/null
+endif
+##########################################################
+ifeq ($(VERBOSE),yes) 
+%.o: %.f
+	@ echo -e "$(RED_ON_GREY)MOGOBULL_($(BOLD)f77$(RESET_COLOR))    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ echo -e "$(RED_ON_GREY)$(BOLD)CFORTF$(RESET_COLOR) == " $(CFORTF)
+	@ $(CFORTF) -c $< #2>&1 > /dev/null
+else
+%.o: %.f
+	@ echo -e "$(RED_ON_GREY)MOGOBULL_($(BOLD)f77$(RESET_COLOR))    - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CFORTF) -c $< 2>&1 > /dev/null
+endif
+##########################################################
+ifeq ($(VERBOSE),yes) 
+%.o: %.f90
+	@ echo -e "$(RED_ON_GREY)MOGOBULL_($(BOLD)f90$(RESET_COLOR))  - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ echo -e "$(RED_ON_GREY)$(BOLD)CFORTF$(RESET_COLOR) == " $(CFORTF)
+	@ $(CFORTF) -c $< #2>&1 > /dev/null
+else
+%.o: %.f90
+	@ echo  -e  "$(RED_ON_GREY)MOGOBULL_($(BOLD)f90$(RESET_COLOR))  - Compiling:  $(BOLD)$@$(RESET_COLOR)"
+	@ $(CFORTF) -c $< 2>&1 > /dev/null
+endif
+##########################################################
+
+
+-include .makedepend

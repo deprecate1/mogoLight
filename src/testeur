@@ -1,0 +1,2 @@
+#gogui -program './mogo --19 --nbTotalSimulations 1 --nbThreads 1' -size 19
+gogui -program './mogo --9 --time 1 --timeManagementMode 1 --nbThreads 1 --pondering 0' -size 7 -komi 42 

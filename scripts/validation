@@ -1,0 +1,17 @@
+#! /bin/bash
+
+
+#nom_fich_res="resultsTournamentMoGo1MachineVersusMoGo43Machines"
+nom_fich_res="validation"
+commande_bot_1="../src/mogo --9 --time 2"
+commande_bot_2="../src/oldmogo --9 --time 2"
+#commande_bot_2="./mogocvs"
+nb_games="200"
+taille="9"   
+#taille="19"
+
+time ../../usr/bin/twogtp -black "$commande_bot_1" -white "$commande_bot_2" -size $taille -auto -sgffile $nom_fich_res -games $nb_games -alternate -komi 7.5 -verbose 1
+
+# avec --time 5 on obtient 255 à 17 ==> je passe a --time 1
+
+

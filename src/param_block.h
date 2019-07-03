@@ -1,0 +1,6 @@
+#ifndef GE_PARAM_BLOCK_H
+#define GE_PARAM_BLOCK_H
+
+#define GE_DEFAULT_SQUARE_BLOCK_SIZE 4
+
+#endif

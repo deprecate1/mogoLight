@@ -1,0 +1,7 @@
+boardsize 19
+play black D4
+play white D16
+play black Q4
+play white Q16
+genmove black
+quit

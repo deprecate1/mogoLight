@@ -1,0 +1,24 @@
+name=MoGoBot1
+password=mogomogo
+room=Computer Go
+rules=chinese
+rules.boardSize=19
+rules.time=60:00
+verbose=t
+logFile=MoGo.log
+gameNotes=experimental version of mogo.
+reconnect=t
+#opponent=ajahuang
+#opponent=mogoopp
+#opponent=Mango2
+#opponent=Casillux
+#opponent=MoGoBot2
+#opponent=parkwj
+#opponent=arpad
+#opponent=teytaud
+undo=f
+engine=../mogo --19 --totalTime 3600 --nbThreads 4 --pondering 1
+#engine=../MoGo/src/./mogook --mode gtp --allGameTime 28 --defaultNew19 --thinkOverOtherTime 1 --keepTreeIfPossible 1 --nbThreads 4 --time 21 --earlyCut 10000 --earlyCutRatioFirstMove 0.8 --earlyCutRatioVSSecondMove 10 --thinkOverOtherTime 1 --keepTreeIfPossible 1 --limitMemoryUsed -1 --collectorLimitTreeSize 470000 --limitTreeSize 600000 --mercyThresholdDivider 10 --timeManagementMode 3 --numMoveBeginning 75 --maxBeginning 6 --dontDisplay 1 --displayGames 0
+
+mode=custom
+#mode=tournament

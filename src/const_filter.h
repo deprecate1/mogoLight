@@ -1,0 +1,6 @@
+#ifndef GE_CONST_FILTER_H
+#define GE_CONST_FILTER_H
+
+#define GE_MODE_STAT_DISTANCE1 1
+
+#endif

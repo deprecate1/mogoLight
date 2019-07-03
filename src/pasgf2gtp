@@ -1,0 +1,47 @@
+#!/bin/bash
+
+for num in 001 002 003 004 005 006 007 008 009 010 011 012
+do
+
+rm archiveResults$num
+touch archiveResults$num
+rm resultPb$num
+touch resultPb$num
+fileName=`ls ${num}*`
+fileSol=`ls s-${num}*`
+echo $fileName $fileSol
+diff $fileName $fileSol | sed 's/W.*//g' | sed 's/.*B.//g' | sed 's/\].*//g' | grep -v "[0-9]" > S
+
+echo "boardsize 9" > input
+echo "clear_board" >> input
+egrep "AB" $fileName | sed 's/\[/\n/g' | sed 's/\]/\n/g' | grep "[a-z]" > black
+egrep "AW" $fileName | sed 's/\[/\n/g' | sed 's/\]/\n/g' | grep "[a-z]" > white
+n=`cat black | wc -l`
+for i in `seq $n`
+do
+	head -$i black | tail -1 | sed 's/^a/A/g' | sed 's/^b/B/g' | sed 's/^c/C/g' | sed 's/^d/D/g' | sed 's/^e/E/g' | sed 's/^f/F/g' | sed 's/^g/G/g' | sed 's/^h/H/g' | sed 's/^i/J/g' | tr 'a-i' '1-9' | sed 's/^/play black /g' >> input
+	echo showboard >> input
+	head -$i white | tail -1 | sed 's/^a/A/g' | sed 's/^b/B/g' | sed 's/^c/C/g' | sed 's/^d/D/g' | sed 's/^e/E/g' | sed 's/^f/F/g' | sed 's/^g/G/g' | sed 's/^h/H/g' | sed 's/^i/J/g' | tr 'a-i' '1-9' | sed 's/^/play white /g' >> input
+	echo showboard >> input
+done
+echo showboard >> input
+echo genmove black >> input
+echo quit >> input
+cp input gtpPb$num
+for i in `seq 10`
+do
+
+./mogo --9 --nbTotalSimulations 15000 < input > output
+rep=`grep "=" output | tail -2 | head -1 | sed 's/.* //g'`
+cat S | tr 'a-z' 'A-Z' | sed 's/A$/1/g' | sed 's/B$/2/g' | sed 's/C$/3/g' | sed 's/D$/4/g' | sed 's/E$/5/g' | sed 's/F$/6/g' | sed 's/G$/7/g' | sed 's/H$/8/g' | sed 's/I$/9/g' | sed 's/I/J/g' > S2
+echo "reponse=" $rep
+echo $rep >> archiveResults$num
+echo -n bingo:
+grep $rep S2 >> resultPb$num
+cat S2 > BonRep$num
+done
+
+echo "results:"
+wc -l resultPb*
+done
+

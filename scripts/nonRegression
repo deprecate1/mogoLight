@@ -1,0 +1,14 @@
+#! /bin/bash
+
+
+#nom_fich_res="resultsTournamentMoGo1MachineVersusMoGo43Machines"
+nom_fich_res="resultNonRegression"
+commande_bot_1="./mymogo"
+commande_bot_2="/usr/games/gnugo --mode gtp"
+#commande_bot_2="./mogocvs"
+nb_games="5000"
+taille="9"
+
+twogtp -black "$commande_bot_1" -white "$commande_bot_2" -size $taille -auto -sgffile $nom_fich_res -games $nb_games -alternate -komi 7.5 -verbose 1
+
+# avec --time 5 on obtient 255 à 17 ==> je passe a --time 1

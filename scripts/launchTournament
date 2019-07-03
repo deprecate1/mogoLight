@@ -1,0 +1,12 @@
+#! /bin/bash
+
+
+nom_fich_res="resultsTournamentMoGo1MachineVersusMoGo7Machines"
+commande_bot_1="Bot1"
+#commande_bot_2="/usr/games/gnugo --mode gtp"
+commande_bot_2="Bot2"
+nb_games="5000"
+taille="9"
+
+twogtp -black "$commande_bot_1" -white "$commande_bot_2" -size $taille -auto -sgffile $nom_fich_res -games $nb_games -alternate -komi 7.5 -verbose 1
+

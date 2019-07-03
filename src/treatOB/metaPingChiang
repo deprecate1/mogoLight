@@ -1,0 +1,25 @@
+rm codec.c
+touch codec.c
+
+echo 'int lastMovesSize=lastMoves.size(); int arch1,arch2; if (lastMovesSize>1) {arch1=lastMoves[1];} if (lastMovesSize>2) {arch2=lastMoves[2];}' >> codec.c
+
+##Ping-Chiang recommandations after games held on March 9 Taipei 2011
+./sequenceConverter F3 D7 C5 E5 >> codec.c
+./sequenceConverter E5 E7 F3 E3 E4 D3 C4 C7 F7 F2 G3 F8 F6 C3 B5 G2 >> codec.c
+./sequenceConverter E5 E7 E6 D7 F7 E3 F8 D4 C5 F4 G5 D5 D6 C6 B6 C7 C4 B7 C3 G4 H5 D2 C2 H4 >> codec.c
+./sequenceConverter F5 D5 D6 C6 D7 E5 F6 F4 >> codec.c
+./sequenceConverter F5 D5 E3 E7 F7 E6 F6 E4 F3 D3 D2 C2 >> codec.c
+./sequenceConverter F5 D5 D4 C4 E4 C3 D6 C5 E6 H5 C6 E2 F2 E3 F3 G4 F4 G7 >> codec.c
+./sequenceConverter F3 D7 C5 F6 >> codec.c
+./sequenceConverter E4 E6 C5 F5 F4 C6 >> codec.c
+./sequenceConverter E4 E6 C5 F5 F4 C6 B6 >> codec.c
+./sequenceConverter E5 E7 D7 E3 E8 F7 >> codec.c
+./sequenceConverter F6 D4 E4 E3 D5 C5 E5 F3 >> codec.c
+./sequenceConverter F6 D4 E4 E3 D5 C5 E5 C6 >> codec.c
+./sequenceConverter E5 E7 D3 E3 E4 F3 F7 D4 C4 F6 E6 D2 D5 G7 F8 G6 >> codec.c
+./sequenceConverter E5 E7 G6 D3 C4 F3 C3 C7 H3 G4 H4G5 H5 F6 >> codec.c
+./sequenceConverter E5 E7 C6 F3 D3 G5 >> codec.c
+./sequenceConverter E5 E7 C6 F3 D3 E4 >> codec.c
+./sequenceConverter F3 D7 C5 F6 >> codec.c
+./sequenceConverter F4 D6 C7 D7 C6 D5 C5 D4 >> codec.c
+./sequenceConverter F4 D6 C7 C6 D7 E6 E7 F6 >> codec.c

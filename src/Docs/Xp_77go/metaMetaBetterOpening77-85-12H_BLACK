@@ -1,0 +1,9 @@
+#! /bin/sh
+
+#launch the automatic construction experiment 
+
+DATE="2011-07-05 18:58:00"
+
+#oarsub -n B11 -r "$DATE" -l nodes=BEST,walltime=12:10 "./metaBetterOpening77-85-12H_BLACK" -t allow_classic_ssh -p 'cluster="griffon"'
+oarsub -n wB11  -l nodes=10,walltime=12:10 "./metaBetterOpening77-85-12H_BLACK" -t allow_classic_ssh -p 'cluster="griffon"'
+

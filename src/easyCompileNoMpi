@@ -1,0 +1,2 @@
+g++  -O2 -g -march=opteron -ffast-math -W -enable-threads -DPARALLELIZED -D_REENTRANT -pthread  -c innermcgoplayer_mg.cpp
+make noMpi

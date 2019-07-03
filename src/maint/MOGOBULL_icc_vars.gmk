@@ -1,0 +1,70 @@
+#
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+# || (C) 2006 by Bull S.A.S.                                                               || 
+# ||      Copyright (C) 2006 Bull S.A.S. All rights reserved                               || 
+# ||      Bull, Rue Jean Jaures, B.P.68, 78340, Les Clayes-sous-Bois                       || 
+# ||      This is not Free or Open Source software. Please contact                         || 
+# ||      Bull S.A.S. for details about its license.                                       || 
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| 
+
+CC	:= icc
+CPP	:= $(CC) -E
+CXX	:= icpc
+CFORT	:= ifort
+LD	:= icpc
+
+# WARNING : -pad option tried, but no recognized ?
+
+# global icc optimization report
+export MOGOBULL_ICC_OPTIMIZATION_REPORT=\
+	MOGOBULL_icc_optimization_report.txt
+
+# per directory icc optimization report
+export MOGOBULL_PERDIR_ICC_OPTIMIZATION_REPORT=\
+	icc_optimization_report.txt
+
+CC_CPUTYPE	:= $(shell uname -m)
+CC_ICCNUMBER	:= $(shell which icc | sed -e 's/.*\/\([0-9]*.*\)\/bin.*/\1/g' | cut -d. -f1)
+
+ifeq ($(CC_CPUTYPE), x86_64)
+#######################################
+ifeq ($(DEBUG), yes)
+GENERAL_DEFS    += -DHAVE_ICC_AND_EM64T  -D_EM64T_
+# Use DWARF2 formatted debugging information
+# NOTE (see icc manpage for details): Only -debug semantic_stepping produces proper code
+# -debug extended produces the following error: undefined reference to `.text'
+# -debug variable_locations produces the following error: undefined reference to `.text'
+# -debug inline_info produces the following error: Unrecognized keyword 'inline_info' for option '-debug'
+ifeq ($(CC_ICCNUMBER), 9)
+CXXFLAGS	+= -O0 -g -debug semantic_stepping -tcheck
+else
+CXXFLAGS	+= -O0 -g -debug semantic_stepping -tcheck
+endif
+#############
+else
+GENERAL_DEFS    += -DHAVE_ICC_AND_EM64T  -D_EM64T_
+########
+ifeq ($(CC_ICCNUMBER), 10)
+FUN		+= -unroll0 -ftrapuv -ftls-model=initial-exec -parallel
+CXXFLAGS	+= -fast -i-static -O3 -funroll-loops -march=pentium4 -wd981
+LDFLAGS		+= -xP -i-static
+####
+else
+CXXFLAGS	+= -enable-threads -DINTEL_COMPILER -I/opt/intel/cc/9.0/include/c++/ -cxxlib-icc -i-static -O3 -funroll-loops -march=pentium4 -wd981
+LDFLAGS		+= -xP -cxxlib-icc -i-static
+endif # ICC number
+endif #DEBUG
+endif
+
+ifeq ($(CC_CPUTYPE), ia64)
+GENERAL_DEFS    += -DHAVE_ICC_AND_IA64 -D_IA64_ -D_ia64_
+ifeq ($(DEBUG), yes)
+CC_OPTIMIZER	+= -tpp2 -O0 -p -g
+else
+CC_OPTIMIZER	+= -tpp2 -parallel -Zp16 -fast -inline-level
+endif #DEBUG
+endif
+
+ifeq ($(OPTIMIZ_REPORT), yes)
+COPTS   += -opt_report_level max -opt_report_file $(MOGOBULL_PERDIR_ICC_OPTIMIZATION_REPORT)
+endif

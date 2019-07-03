@@ -1,0 +1,3 @@
+../src/mogo --9 --nbThreads 1 --nbTotalSimulations 13000 --pondering 0 --startCountDown 0 --coefRatio `cat coef.$HOST`
+
+

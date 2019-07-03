@@ -1,0 +1,15 @@
+#! /bin/sh
+#mogo must be compiled with #define MOGOTW disabled
+PATH_MOGO="/users/dsa/doghmen/srcSVN"
+
+#folder containing the correct .sgf files
+# /!\ WARNING sgf files must be marked 
+# * RE[W+] for a White winning sgf
+# * RE[B+] for a Black winning sgf 
+
+CORRECT_SFG_FOLDER="SGF_CORRIGES"
+
+#(echo "boardsize 9" ; echo "clear_board" ; echo "quit" ) | $PATH_MOGO --9 --pathsFuseki $CORRECT_SGF_FOLDER --saveOB newob.ob
+(echo "boardsize 9" ; echo "clear_board" ; echo "quit" ) | /users/dsa/doghmen/srcSVN/mogo --9 --pathsFuseki SGF_CORRIGES/ --saveOB newob.ob
+
+#the newob.ob generated must be added iin the top of the previous .ob file.

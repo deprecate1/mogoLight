@@ -1,0 +1,2 @@
+time mpicxx -O0 -c  -enable-threads -DPARALLELIZED -D_REENTRANT -pthread innermcgoplayer_mg2.cpp
+make 

@@ -1,0 +1,132 @@
+Lists of all command options
+
+--randomMode : randomMode, see MoGo::Goban::randomOutOneMove( const int mode, LocationList *&locationListIncludingThisLocation ) for the available numbers. Normally 44 is strong enough.
+--randomMode2 : randomMode 2 is used when there is less than gobanRandomThreshold possible moves at the leaf.
+
+--firstPlayUrgency : FPU as explained in ... everywhere.
+--nbTotalSimulations : number of simulations for generating one move.
+--databaseName : the file that contains the opening database
+--useOpeningDatabase : 1 to active the opening with database
+--p1 : parameter in the uct formulae
+--p2 : parameter in the uct formulae
+
+--uctUpdateMode set -1 to use the combination of result(0/1) and territory as the score.
+
+--test : some small functions for tests and debugs. one useful function is
+--test openingZ --name databaseName
+which shows the opening database (databaseName) visually.
+
+--useColor : by default the print is with color. this is annoying with > LOG command. (however I failed to active it...)
+--fastRand : optimisation for random mode
+--limitTreeSize : to protect that MoGo never uses up the memory.
+--cfgMode : necessarily enabled with blockMode or zoneMode. done automatically
+--firstMoveFixed : a heuristic opening.
+--dontDisplay : to control the print in InnerMCGoPlayer
+--srandByTime : srand by time. Attention! the only command with "off" and "on".
+--gobanSize : goban size.
+--uselessMode : one option in the random simulation
+--earlyStop : when the difference of eaten stones are bigger than stopDifference, then stop random simulation
+--stopDifference : see above
+--recheckEyeMode : an option for the advanced random simulation.
+--isSelfAtariMode : an option for the advanced random simulation.
+--allowDoublePassInTree : an option for the tree to deal with two passes
+--showBigGobanStringNumber : by default when the goban is big, the string number (table) is not shown.
+--shishoLikeMoveForced : force the shisho-like move in the random simulation
+--accelerateMode : stop thinking when the most simulated move is 10 times more simulated than the second.
+--zoneModeStopNumber : zone mode for moves before this number.
+--undoMode : to prevent from the players cheating on KGS by undo. but it does not work:(
+--shishoCheckMode : an very important option for the large game. otherwise it loses too easily (and probably early) in the situation of shisho.
+--resignThreshold : by default is 0.99 (opponent's estimation of the best move of player)
+--openingTestMode : used with openingTestThreshold
+--openingTestThreshold : if MoGo believes winning with proba bigger than 1-openingTestThreshold, then game is stopped (with score 5000 given).
+
+--randomThreshold
+--gobanRandomThreshold
+--thresholdSelfAtari
+
+--minimumDatabaseUse
+
+--komi2 : used for an idea of adjusting the MoGo's level by changing the komi. not successed.
+--nbSimulationsForEachNode : 1 by default. it is possible that >1 is better than one simulation, but the improvement is not that big.
+
+--nbTotalSimulations : number of simulations for generating one move.
+
+--numUpdateFormulaeMoveSelector
+
+--openingMode : Yizao has tried several openingMode. Now zone mode is much better for large board.
+--openingMoveNumber : when openingMode is used.
+
+--blockMode : block mode. explained in the rapport. choose 3.
+--metaBlockMode : choose 5 here.
+--zoneMode : we have 6 zone modes. 1 is used in the tournament and are probably the best.
+--freeLocationSize : a parameter for the block mode. do not trust it too much.
+--distance1 : for blockMode
+--distance2 : for blockMode
+--grDistance1 : for group in CFG. useless
+--grDistance2 : for group in CFG. useless
+
+--keepTreeIfPossible : 1 means when a new Go board is given, try to keep the sub-tree
+
+--urgencySelectorMode
+--nearMode
+--sizeNear
+--nearMode2
+--alphaSqrt
+--useServer
+--nbChildsAlreadyDone
+--bufferSizeForEachMachine
+--addingOwnSimulations
+--multiplyingOwnSimulations
+--useSimpleServerVersion
+--nbSimulationsByNodeServer
+--typeOfComputation
+
+--firstPlayUrgencyByGrandFather
+--earlyCut
+
+--logShift
+--invShift
+
+--alpha
+--beta
+--mixThreshold
+--alpha2
+--relativeDepthMax
+--meta
+
+--imitateMode : to play symmetrically
+--imitateMoveNumber : within this number of moves
+--serverPort
+--correlatedMode : correlated mode suggested by Remi. does not always help.
+
+--playerName : player name. normally we do not use this any more but these players below exist...
+MoGo (by default), mix, mixSmooth, testAlpha, testBeta, depthMoGo, power, opening1, new, advanced, komi, MoGo
+
+--mixRandomModeRatio : mix random mode.
+--mixRandomMode1 : random mode 1 for mix random mode
+--mixRandomMode2 : random mode 2 for mix random mode
+
+--nbThreads
+
+--debugMode : too long ago...
+--fillRangeFirstMode : fill the rangeLocation of goban first in the random simulation.
+
+
+
+
+
+ABOUT THE BUILD SYSTEM :
+
++ all is makefile
++ a list of targets can be retrieve using the 'make help' command
++ the configuration files are in the maintainer directory 'maint'
++ in the dir we have some files like :
+	- MOGOBULL_compiler_defs.gmk : here are the translation of configuration in programming definitions (like defines)
+	- MOGOBULL_exported_vars.gmk : here are the configuration variables
+	- MOGOBULL_gcc_vars.gmk      : all the needed for the GCC compiling
+	- MOGOBULL_icc_vars.gmk	     : all the needed for the Intel compiling suite
+	- MOGOBULL_makedefs.gmk      : basic definitions
+	- MOGOBULL_makerelease.gmk   : releasing stuff (not used for now)
+	- MOGOBULL_makerules.gmk     : basic rules
+
++ for MPI, the build needs a MPI_HOME variable to know what are your plans concerning the libraries

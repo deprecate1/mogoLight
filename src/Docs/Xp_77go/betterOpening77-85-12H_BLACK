@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# the directory for the experiment
+DIR='/home/orsay/hdoghmen/FUSEKI_BLACK11'
+cd $DIR
+
+#passwordless ssh -- not all the time needed
+for i in `uniq $OAR_FILE_NODES`
+do
+    ssh -o stricthostkeychecking=no $i pwd
+done
+
+NB_PROCESSES=`cat $OAR_FILE_NODES | wc -l`
+
+#set the path to twogtp program
+GOGUI='/home/bordeaux/oteytaud/double/mogoLight/third_party/gnugo/3.6/interface/gtp_examples/twogtp'
+
+SIZE='7'
+KOMI='8.5'
+
+#which version against which version are provided in the scripts below
+CMD1=$DIR/'scriptNewMeta77-85-12H_BLACK'
+CMD2=$DIR/'scriptOldMeta77-85-12H_BLACK'
+
+SGF_DIR=$DIR/'SGFSFUSEKI-'$SIZE'-'$KOMI'-12H_BLACK'
+
+SGF_BLACK='BLACK11_'$SIZE'_'$KOMI'_'
+SGF_WHITE='WHITE11_'$SIZE'_'$KOMI'_Black11_'
+
+#rm MoGoGTP.log
+
+#run the experiment and save produced sgf files in "$SGF_DIR"
+for i in `seq 5000`
+do
+
+    dt=`date +'%N'`
+    $GOGUI -black "$CMD1" -white "$CMD2" -games 1 -komi $KOMI -size $SIZE -sgffile  $SGF_DIR/${SGF_BLACK}_`date +%y_%m_%d__%N`_${dt} 
+
+done
+

@@ -1,0 +1,25 @@
+S=7
+T=150
+TB=149
+
+mkdir archivage
+#rm archivage/*.dat
+
+mkdir open
+cp yes.sgf open/
+for t in `seq 1777`
+do
+rm open -rf
+mkdir open
+touch open/pouet
+
+for G in `seq 100`
+do
+gogui-twogtp -white "../../mogoLight/src/mogo --$S --nbTotalSimulations $T --minNumberOfSimulationsOfResign $TB --earlyCut 0 --firstMoveFixed -1 " -black "../../mogoLight/src/mogo --$S --nbTotalSimulations $T --minNumberOfSimulationsOfResign $TB --earlyCut 0 --firstMoveFixed -1 --pathsFuseki \"./open\" " -games $G -sgffile testlearnob -size $S -komi 9.5 -auto -maxmoves 1000 -referee "/usr/games/gnugo --mode gtp" 
+cp testlearnob*.sgf open/
+done
+
+dt=`date +'%N'`
+mv testlearnob*.dat archivage/testlearnob$dt
+rm testlearnob*.sgf
+done
